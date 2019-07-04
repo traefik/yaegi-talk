@@ -1,0 +1,114 @@
+Yaegi
+Yet Another Elegant Go Interpreter
+1 jul 2019
+Tags: go, interpreter, plugin
+
+Marc Vertes
+Software Developer, Containous
+marc@containo.us
+http://containo.us
+
+
+* Motivation
+
+Make Go programs extensible (without rebuild / redeploy)
+
+Let users do scripting, interactive or not
+
+Many embedded scripting engines exist for Go: [[https://github.com/golang/go/wiki/Projects#virtual-machines-and-languages][go wiki projects]]
+
+See one language missing ?
+
+.image langlist.png
+
+* Goal and priorities
+
+Provide a Go compatible dynamic interpreter, embeddable, simple,
+secure and fast enough to be used as a plugin engine. 
+
+For _production_
+
+- stick to Go language specification
+- security and robustness over performance
+- not only runtime used by scripts, but also runtime using scripts
+- leverage and maintain the integrity and safety of the runtime
+
+.image yaegi.png
+
+* Yaegi features
+
+- depends only on stdlib (go/parser, reflect)
+- internally compile graphs of closures
+- no "unsafe" or "syscalls" used or exposed by default
+- interpret unmodified Go packages (except assembly)
+- allow control of runtime features exposed to interpreter
+- allow transparent use of pre-compiled packages
+
+.image yaegi.png
+
+* Challenge
+
+Implement interpreted plugins in HTTP middlewares.
+Impact ?
+
+    benchmark                              old ns/op      new ns/op       delta
+
+    AddPrefix-8                            151919         166460          +9.57%
+    Compress-8                             769088         817632          +6.31%
+    Password-8                             2127893        1540373869      +72289.63%
+    Password_A-8                           2129455        2355056         +10.59%
+
+.image yaegi.png
+
+* Yet Another Elegant Go Interpreter
+
+- Open source project, Apache 2 license
+- Contributions most welcome
+- [[http://gitub.com/containous/yaegi]]
+
+.image yaegi.png
+
+* For coders
+
+* Interpreter API
+
+Create a new interperter context
+.code t1.go /i := /,/i := /
+
+Optional: allow use of runtime symbols in interpreter
+.code t2.go /i.Use/,/i.Use/
+
+Run Go code
+.code t1.go /i.Eval/,/i.Eval/
+
+.image yaegi.png
+
+* Example
+
+Hello World
+.play -edit t1.go
+.image yaegi.png
+
+* Example
+
+Dependencies? Use Import, Use Use
+.code t6.go /Use/,/hello/
+
+.image yaegi.png
+
+* Example
+
+Channels, goroutines, etc. are provided
+.play -edit t3.go
+
+* Example
+
+An interpreted package in the static binary
+.play -edit t5.go 
+
+* Thank you
+
+[[http://gitub.com/containous/yaegi]]
+
+.image yaegi.png
+
