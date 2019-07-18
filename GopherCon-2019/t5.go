@@ -12,6 +12,6 @@ func main() {
 	v, _ := i.Eval("foo.Bar")                  // access foo.Bar symbol
 	bar := v.Interface().(func(string) string) // type assert value
 
-	r := bar("Kong")
+	r := bar("Kung")
 	println(r)
 }

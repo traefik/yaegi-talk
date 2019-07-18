@@ -1,5 +1,0 @@
-benchmark                              old ns/op      new ns/op       delta
-AddPrefix-8                            151919         166460          +9.57%
-Compress-8                             769088         817632          +6.31%
-Password-8                             2127893        1540373869      +72289.63%
-Password_A-8                           2129455        2355056         +10.59%
