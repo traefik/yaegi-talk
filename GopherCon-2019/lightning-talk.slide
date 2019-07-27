@@ -5,11 +5,11 @@ Yet Another Elegant Go Interpreter
 Tags: go, interpreter, plugin
 
 Marc Vertes
-Software Developer, Containous
+Software Engineer, Containous (Traefik)
 marc@containo.us
 http://containo.us
 
-*
+* 
 
 .background yaegi_announce.png
 
@@ -26,10 +26,9 @@ http://containo.us
 - Unify scripting and implementation languages
 
 
-: The main motivation for yaegi is to make Go programs extensible, without having to rebuild and redeploy them
-: This may be obvious in gaming or science domains, where interpreters are common, but it is also important for distributed systems
-: Existing script engines (lua, php, js, etc) are not the most adapted to exploit the Go runtime
-: and in fact there is probably not a better candidate than Go itself
+: The main motivation for yaegi is to extend Go programs, without having to rebuild and redeploy them
+: we want go scripts and plugins, in embedded interprers, or command line, even executable scripts.
+: What a better language to use the Go runtime, than Go itself
 : A dynamic Go  would allow to unify scripting and implementation languages
 : to remove the burden of syntax switch and the need to rewrite a slow module
 
@@ -50,7 +49,7 @@ For _production_
 : so priorities are to stick to standard and implement the formal Go specification
 : and to favor security over performance (no use of unsafe, syscalls)
 : For interpreter performance, scripts should be able to use fast pre-compiled modules
-: For application extensibility, compiled modules
+: For extensibility, compiled code should be able to use interpreted functions as if they were compiled
 
 * Performances
 
@@ -66,32 +65,53 @@ Gzip is provided by compiled standard library, only the _glue_ is interpreted.
 : We wanted to assess if Yaegi can be used as a plugin engine in distributed systems
 : To answer that, we have benchmarked gziphandler, a middleware for compressing HTTP responses.
 : gziphandler provides interface methods which implement compression for the HTTP server in stdlib.
-: results are good because the compression itself is provided by stdlib. Only glue is interpreted.
-: Interpreters work best at providing the glue language and offloading CPU intensive to optimized compiled libraries.
+: the results show less than 10% of overhead compared to the exact same code, but compiled.
+: It's not too slow because the compression itself is provided by stdlib. Only glue is interpreted.
+: Interpreters work best at providing the glue language and offloading CPU intensive tasks to optimized an compiled libraries.
 
 * Example 1
 
 Hello World
 .play -edit t1.go
 
+: Let's play now with real code
+: In this first example, we create an embedded interpreter, and we pass it a string to evaluate.
+: Only two functions are necessary, the first one creates an interpreter context,
+: The second one evaluates the string containing Go code
+
 * Example 2
 
 Channels, goroutines, etc. are provided
 .play -edit t3.go
+
+: This second example is identical in its structure to the previous one, except that this time,
+: instead of just printing something, the script starts a goroutine and use a channel!
+: let's run it, ... ok.
 
 * Example 3
 
 A dynamic function in the static binary
 .play -edit t5.go
 
+: In this last example, we see how to plug intrepreted code in a pre-compiled application, and
+: use that code as if it was pre-compiled.
+: We have 2 eval calls. The first one compiles the script package in the interpreter context
+: the 2nd one gets the interesting symbol foo.Bar from interpreter, as a reflect.Value
+: finally, we apply a type assertion on its interface, and we have a usable function,
+: totally transparent.
+: Let's run it, ... ok.
+
 * Yet Another Elegant Go Interpreter
 
 - Open source project, Apache 2 license
-- Contributions most welcome
+- Feedback & contributions are welcome
 - [[http://gitub.com/containous/yaegi]]
 
 .image yaegi.png
 
 : Thank you for assisting this presentation.
+: I think a Go interpreter is a good fit for the Go ecosystem, and I really hope it becomes useful for the community
+: You can use it in the playground
 : Don't hesitate to get further details on the github site and play with the project.
-: Again, it's opensource, and we would love to see your contributions
+: Again, it's opensource, and we appreciate any feedback, good or bad, and contributions
+: Thank you
