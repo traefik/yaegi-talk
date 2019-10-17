@@ -1,0 +1,189 @@
+Yaegi
+
+Yet Another Elegant Go Interpreter
+22 Oct 2019
+Tags: go, interpreter, plugin
+
+Marc Vertes
+Software Engineer, Containous (Traefik)
+marc@containo.us
+http://containo.us
+
+* 
+
+.background yaegi_big1.png
+
+: Hello, my name is Marc, I'm a software engineer at Containous, the company behind Traefik
+: and I'm happy today to present you Yaegi, Yet Another Elegant Go Interpreter
+: an opensource project that we are just announcing this week
+
+* Introduction
+
+- Yaegi is Another Elegant Go Interpreter
+- Open source (Apache 2.0 license)
+- Created at [[https://containo.us][Containous]], maker of [[https://traefik.io][Traefik]], the cloud native edge router
+- Published last July, during GopherCon
+- Development on [[https://github.com/containous/yaegi]]
+- alpha level, progressing rapidly
+
+* Motivation
+
+- Make Go programs extensible
+- Existing [[https://github.com/golang/go/wiki/Projects#virtual-machines-and-languages][script engines]] less fit than Go itself
+- Unify scripting and implementation languages
+
+Use cases
+
+- embedded: plugin engine
+- command line interpreter
+- executable scripts
+
+: The main motivation for yaegi is to extend Go programs, without having to rebuild and redeploy them
+: we want go scripts and plugins, in embedded interprers, or command line, even executable scripts.
+: What a better language to use the Go runtime, than Go itself
+: A dynamic Go  would allow to unify scripting and implementation languages
+: to remove the burden of syntax switch and the need to rewrite a slow module
+
+* Goal and priorities
+
+Provide a Go dynamic interpreter, embeddable, simple,
+secure and fast enough to be used as a plugin engine.
+
+For _production_
+
+- Implement the Go language specification
+- Security and robustness over performance
+- performance: scripts access fast pre-compiled modules
+- extensibility: compiled modules use script as if it was pre-compiled
+
+: The goal is to provide a Go dynamic interpreter embeddable, simple, secure and fast enough to be used as plugin engine
+: this is not a toy, it's for use in production
+: so priorities are to stick to standard and implement the formal Go specification
+: and to favor security over performance (no use of unsafe, syscalls)
+: For interpreter performance, scripts should be able to use fast pre-compiled modules
+: For extensibility, compiled code should be able to use interpreted functions as if they were compiled
+
+* Other features
+
+- no dependencies other than Go standard library
+- works everywhere Go works
+- supports the two last major Go releases (1.12 and 1.13)
+- `unsafe` and `syscall` packages not used/exported by default
+
+* Architecture
+
+.image arch1.png
+
+- interpreter is just a regular go module
+- interpreted code is evaluated within app process
+- yaegi: go build + run + stdlib embedded in app
+
+* Architecture
+
+.image arch1a.png
+
+- intrepreted symbols can use compiled ones
+- compiled symbols can use interpreted ones
+
+* Interpreter API
+
+- create an interpreter context:
+	func New(options Options) *Interpreter
+- expose binary packages to interpreter:
+	func (*Interpreter) Use(values Exports)
+- evaluate Go source code:
+	func (*interpreter) Eval(src string) (reflect.Value, error)
+
+* Hello World
+.play -edit t1.go
+
+: Let's play now with real code
+: In this first example, we create an embedded interpreter, and we pass it a string to evaluate.
+: Only two functions are necessary, the first one creates an interpreter context,
+: The second one evaluates the string containing Go code
+
+* Incremental Eval
+.play -edit ex2.go
+
+* Channels & Goroutines
+.play -edit t3.go
+
+: This second example is identical in its structure to the previous one, except that this time,
+: instead of just printing something, the script starts a goroutine and use a channel!
+: let's run it, ... ok.
+
+* A dynamic function run from static code
+.play -edit t5.go
+
+* Importing packages
+.play -edit ex3.go
+
+* Inception
+.play -edit inception.go
+
+* Interpreter context
+
+.image interpreter-context1.png
+
+* Interpreter context
+
+- all objects (type, const, var, func) are represented using `reflect.Value`
+- each package has its symbols: `map[string]reflect.Value`
+- each function call has its local frame: `[]reflect.Value`
+
+	reflect.Value: {*type, *addr}
+
+* Performances
+
+Assess Yaegi as a plugin engine for distributed systems
+.image middleware.png
+What about replacing a compiled middleware by an interpreted one?
+.image emoji-peur.png
+
+* Performances
+
+Gziphandler is an off-the-shelf HTTP middleware to compress HTTP response
+[[https://github.com/nytimes/gziphandler]]
+
+.image perf-compiled.png
+
+One version runs gziphandler in compiled mode
+
+* Performances
+
+.image perf-interpreted.png
+
+The other version runs gziphandler in interpreted mode
+
+* Performances
+
+Benchmark [[https://github.com/nytimes/gziphandler][gziphandler]] in a web server compiled vs interpreted
+
+    benchmark                    old ns/op      new ns/op       delta
+    Compress-8                   769088         817632          +6.31%
+
+Gzip is provided by compiled standard library, only the _glue_ is interpreted.
+
+.image emoji-sourire-sueur.png
+
+: We wanted to assess if Yaegi can be used as a plugin engine in distributed systems
+: To answer that, we have benchmarked gziphandler, a middleware for compressing HTTP responses.
+: gziphandler provides interface methods which implement compression for the HTTP server in stdlib.
+: the results show less than 10% of overhead compared to the exact same code, but compiled.
+: It's not too slow because the compression itself is provided by stdlib. Only glue is interpreted.
+: Interpreters work best at providing the glue language and offloading CPU intensive tasks to optimized an compiled libraries.
+
+* Yet Another Elegant Go Interpreter
+
+- Open source project, Apache 2 license
+- Feedback & contributions are welcome
+- [[http://gitub.com/containous/yaegi]]
+
+.image yaegi.png
+
+: Thank you for assisting this presentation.
+: I think a Go interpreter is a good fit for the Go ecosystem, and I really hope it becomes useful for the community
+: You can use it in the playground
+: Don't hesitate to get further details on the github site and play with the project.
+: Again, it's opensource, and we appreciate any feedback, good or bad, and contributions
+: Thank you
