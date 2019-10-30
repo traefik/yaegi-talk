@@ -1,6 +1,9 @@
 # yaegi-talk
 talks and docs about yaegi
 
+* [GopherCon-2019] (lightning talk)
+* [GoLab-2019] (30 min. talk)
+
 ## Install
 
 See the slides and play the examples on your machine (not tested on Windows)
@@ -39,3 +42,5 @@ Runnable examples have a small `run` button
 at the bottom right of code text area. Code text areas should be
 editable from the browser.
 
+[GopherCon-2019]: https://talks.godoc.org/github.com/containous/yaegi-talk/GopherCon-2019/lightning-talk.slide
+[GoLab-2019]: https://talks.godoc.org/github.com/containous/yaegi-talk/GoLab-2019/30min-talk.slide
