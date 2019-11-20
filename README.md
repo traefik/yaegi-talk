@@ -3,6 +3,7 @@ talks and docs about yaegi
 
 * [GopherCon-2019] (lightning talk)
 * [GoLab-2019] (30 min. talk)
+* [Toulouse Software Crafters Meetup, 19-nov-2019] (20 min, same as GoLab)
 
 ## Install
 
@@ -44,3 +45,4 @@ editable from the browser.
 
 [GopherCon-2019]: https://talks.godoc.org/github.com/containous/yaegi-talk/GopherCon-2019/lightning-talk.slide
 [GoLab-2019]: https://talks.godoc.org/github.com/containous/yaegi-talk/GoLab-2019/30min-talk.slide
+[Toulouse Software Crafters Meetup, 19-nov-2019]: https://talks.godoc.org/github.com/containous/yaegi-talk/Meetup-software-crafters-Toulouse/talk.slide
